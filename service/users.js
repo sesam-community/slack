@@ -2,8 +2,9 @@ var http = require('http');
 var url = require('url');
 var request = require("request");
 var WebClient = require('@slack/client').WebClient;
+var fs = require("fs");
 //var token = "***REMOVED***"; //process.env.Token;
-var token = "***REMOVED***"  // (test)
+var token = "***REMOVED***";  // (test)
 var web = new WebClient(token);
 var exports = module.exports = {};
 
@@ -29,32 +30,31 @@ function setProfile(profile) {
 }
 
 
-
-//http://www.pngall.com/wp-content/uploads/2016/05/Kitten-PNG-HD.png
-function setImage(img) {
-  var ur = "https://slack.com/api/users.setPhoto?token=" + token + "&mage=logo.png"; 
+exports.setImage = function(img) {
+  var ur = "https://slack.com/api/users.setPhoto?token=" + token + "&user=U57BLUPUJ&mage=" + form+ "&pretty=1"; 
   var opt = {
   url: ur,
     header: {
       'User-Agent': 'Super Agent/0.0.1',
-      'Content-Type':'application/x-www-form-urlencoded',
-      'Content-Type':'image/png'
+      'Content-Type':  'multipart/form-data'  
     }
-
   }
-  request(opt, function (error, response, body) {
-    if (!error) {
-      console.log(response.statusCode);
-      console.log(body);
+
+  var req = request.post(opt, function (err, resp, body) {
+    if (err) {
+      console.log(err);
     } else {
-      console.log(response.statusCode);
+      console.log(body);
     }
   });
+
+  var form = req.form();
+  form.append('image', fs.createReadStream("../logo.png"));
+
 }
 
 
-
-function inviteUser(email) {
+ exports.inviteUser = function(email) {
   var ur = 'https://slack.com/api/users.admin.invite?token=' + token + '&email=' + email + '&pretty=1';
   var opt = {
     url: ur,
@@ -135,8 +135,8 @@ exports.GetUserslist = function (res) {
 console.log("Invited!");
 
 
-// var profile={'first_name':'PondusTrondus','last_name':'prompus'};
-// setProfile(profile);
+var profile={'first_name':'PondusTrondus','last_name':'prompus'};
+setProfile(profile);
 
 };
 
