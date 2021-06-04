@@ -7,4 +7,8 @@ Følgende funksjoner er implementert:
 * Uthenting av usergroups
 * Oppretting av usergroups og tilhørende channel
 * Oppdatering av usergroups og channel. 
-* Legge til deltagere i de forskjellige gruppene. 
+* Legge til deltagere i de forskjellige gruppene.
+
+To run locally, in your /service folder execute:
+1. ```npm install```
+2. ```npm start```

@@ -1,6 +1,3 @@
-var http = require('http');
-var url = require('url');
-var request = require("request");
 var WebClient = require('@slack/client').WebClient;
 var token = process.env.Token;
 var web = new WebClient(token);
@@ -25,13 +22,9 @@ exports.UpdateUsergroupmembers = function(req,res){
         } else {
             console.log("Delete / Deactive / Remove -- ikke implementert")
         }
-        
-
-
       });
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end();    
-        
+      res.end();         
 };
 
 function UpdateMembers(us, ulist , callback) {
@@ -47,7 +40,5 @@ function UpdateMembers(us, ulist , callback) {
             return callback(response);
         }
     });
-
-
 }
 

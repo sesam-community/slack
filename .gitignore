@@ -60,3 +60,6 @@ typings/
 .idea/SesamSlack_forok.iml
 .idea/modules.xml
 .idea/vcs.xml
+
+service/node_modules
+.vscode

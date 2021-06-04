@@ -1,21 +1,15 @@
-var http = require('http');
-var url = require('url');
 var request = require("request");
 var WebClient = require('@slack/client').WebClient;
 var fs = require("fs");
 var token = process.env.Token;
 var web = new WebClient(token);
 var exports = module.exports = {};
-var encoding = require("encoding");
-
+var encoding = require("encoding"); //currently not in use, see line 10
 
 function setProfile(firstName, lastName, userProfile, userId, phone) {
-
   lastName =  encodeURIComponent(lastName); //encoding.convert("Tøfte", "UTF-8" , "ISO-8859-1");
   firstName =  encodeURIComponent(firstName);
   var ur = "https://slack.com/api/users.profile.set?token=" + token + "&user=" + userId + "&profile={'first_name':'" + firstName + "','last_name':'" + lastName + "','phone':'" + phone + "'}" + "&pretty=1";
- // var ur = "https://slack.com/api/users.profile.set?token=" + token + "&user=" + userId + "&profile={'first_name':'" + firstName + "','last_name':'" + lastName + "'}&pretty=1";
- // var ur = "https://slack.com/api/users.profile.set?token=" + token + "&user=" + userId + "&profile=" +profile+"&pretty=1";
   var opt = {
     url: ur,
    encoding: "UTF-8",
@@ -34,45 +28,6 @@ function setProfile(firstName, lastName, userProfile, userId, phone) {
   });
 }
 
-function setImage(userId, imgUrl) {
-  download(imgUrl, userId + '.png', function () {
-    var img = fs.readFile(userId + '.png', function (err, data) {
-      if (err) {
-        console.log(+"Error downloading file: " + err);
-        return;
-      } else {
-        var ur = "https://slack.com/api/users.setPhoto?token=" + token + "&user=" + userId + "&mage=" + form + "&pretty=1";
-        var opt = {
-          url: ur,
-          header: {
-            'User-Agent': 'Super Agent/0.0.1',
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-        var req = request.post(opt, function (err, response, body) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(body);
-          }
-        });
-
-        var form = req.form();
-        form.append('image', fs.createReadStream(userId + ".png"));
-
-      }
-    });
-  });
-
-}
-
-var download = function (uri, filename, callback) {
-  request.head(uri, function (err, res, body) {
-    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
-  });
-};
-
-
 exports.updateUser = function (request, response) {
   if (request.method === "POST") {
     var imgUrl = "";
@@ -81,34 +36,27 @@ exports.updateUser = function (request, response) {
 
     var timeout = 0;
     userArray.forEach(function (element) {
-   
-    
-    var  profile = element["profile"];
-    var  userId = element["id"];
-    var  firstName = element["name"];
-    var  lastName = element["lastName"];
-    var  phone = "";
-    
-    if(element["mobile"][0] != null){
-      phone = element["mobile"][0];
-    }
-
-      if (element["image"] != null) {
-        test = element["image"];
-        if (test["fit_thumb"]["url"] != null) {
-          imgUrl = test["fit_thumb"]["url"];
-        }
+      var  profile = element["profile"];
+      var  userId = element["id"];
+      var  firstName = element["name"];
+      var  lastName = element["lastName"];
+      var  phone = "";
+      
+      if(element["mobile"][0] != null){
+        phone = element["mobile"][0];
       }
 
-    // console.log("Current token: " + token);
-     // setImage(userId, imgUrl);
-     setTimeout(() => {
-     setProfile(firstName, lastName, profile, userId, phone);
-    }, timeout += 500);
+        if (element["image"] != null) {
+          test = element["image"];
+          if (test["fit_thumb"]["url"] != null) {
+            imgUrl = test["fit_thumb"]["url"];
+          }
+        }
 
+      setTimeout(() => {
+      setProfile(firstName, lastName, profile, userId, phone);
+      }, timeout += 500);
     });
-
-
 
     response.writeHead(200, { "Content-Type": "application/json" });
     response.end();
